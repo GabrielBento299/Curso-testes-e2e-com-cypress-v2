@@ -16,15 +16,25 @@ Cypress.Commands.add('fillSignupFormAndSubmit', (emailAddress, password) => {
   });
 });
 
-Cypress.Commands.add('login', (
+Cypress.Commands.add('guiLogin', (
   userName = Cypress.env('USER_EMAIL'),
   password = Cypress.env('USER_PASSWORD')
 ) => {
+  cy.intercept('GET', '**/notes').as('getNotes');
 
   cy.visit('/login');
   cy.get('#email').type(userName);
   cy.get('#password').type(password, { log: false });
   cy.contains('button', 'Login').click();
+  cy.wait('@getNotes');
 
   cy.contains('h1', 'Your Notes').should('be.visible');
+});
+
+Cypress.Commands.add('sessionLogin', (
+  userName = Cypress.env('USER_EMAIL'),
+  password = Cypress.env('USER_PASSWORD')
+) => {
+  const login = () => cy.guiLogin(userName, password);
+  cy.session(userName, login);
 });
