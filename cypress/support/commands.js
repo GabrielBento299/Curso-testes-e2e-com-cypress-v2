@@ -38,3 +38,52 @@ Cypress.Commands.add('sessionLogin', (
   const login = () => cy.guiLogin(userName, password);
   cy.session(userName, login);
 });
+
+const attachFileHandlear = () => {
+  cy.get('#file').selectFile('cypress/fixtures/example.json');
+};
+
+Cypress.Commands.add('createNote', (noteDescription, attachFile = false) => {
+  cy.visit('/notes/new');
+  cy.get('#content').type(noteDescription);
+
+  if (attachFile) {
+    attachFileHandlear();
+  }
+
+  cy.contains('button', 'Create').click();
+  cy.contains('.list-group-item', noteDescription).should('be.visible');
+});
+
+Cypress.Commands.add('editNote', (noteDescription, updatedNoteDescription, attachFile = false) => {
+  cy.intercept('GET', '**/notes/**').as('getNote');
+
+  cy.contains('.list-group-item', noteDescription).click();
+  cy.wait('@getNote');
+
+  cy.get('#content')
+    .as('contentField')
+    .clear();
+  cy.get('@contentField')
+    .type(updatedNoteDescription);
+
+  if (attachFile) {
+    attachFileHandlear();
+  }
+
+  cy.contains('button', 'Save').click();
+
+  cy.contains('.list-group-item', updatedNoteDescription).should('be.visible');
+  cy.contains('.list-group-item', noteDescription).should('not.exist');
+});
+
+Cypress.Commands.add('deleteNote', (updatedNoteDescription) => {
+  cy.contains('.list-group-item', updatedNoteDescription).click();
+  cy.contains('button', 'Delete').click();
+
+  cy.get('.list-group-item')
+    .its('length')
+    .should('be.at.least', 1);
+  cy.contains('.list-group-item', updatedNoteDescription)
+    .should('not.exist');
+});
