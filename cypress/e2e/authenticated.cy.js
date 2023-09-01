@@ -4,7 +4,6 @@ describe('Scenarios where authenciation is a pre-condition', () => {
   beforeEach(() => {
     cy.intercept('GET', '**/notes').as('getNotes');
     cy.sessionLogin();
-
   });
   it('CRUDs a note', () => {
     const noteDescription = faker.lorem.words(4);
@@ -31,5 +30,14 @@ describe('Scenarios where authenciation is a pre-condition', () => {
     cy.wait('@paymentRequest')
       .its('state')
       .should('be.equal', 'Complete');
+  });
+
+  it('logs out', () => {
+    cy.visit('/');
+    cy.wait('@getNotes');
+
+    cy.contains('.nav a', 'Logout').click();
+
+    cy.get('#email').should('be.visible');
   });
 });
