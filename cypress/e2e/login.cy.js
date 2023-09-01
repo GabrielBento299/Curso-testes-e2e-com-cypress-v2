@@ -1,3 +1,5 @@
+/// <reference path="../support/commands.d.ts" />
+
 describe('Login', () => {
   it('successfuly logs in', () => {
 
