@@ -9,8 +9,6 @@ module.exports = defineConfig({
     },
     requestTimeout: 10000,
     video: false,
-    // setupNodeEvents(on, config) {
-    //   // implement node event listeners here
-    // },
   },
+  projectId: 'xqbexo',
 });
