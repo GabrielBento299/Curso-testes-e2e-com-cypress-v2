@@ -34,7 +34,7 @@ describe('Scenarios where authenciation is a pre-condition', () => {
 
   it('logs out', { tags: '@desktop-and-tablet' }, () => {
     cy.visit('/');
-    cy.wait(2000);
+    cy.wait('@getNotes');
 
 
 
